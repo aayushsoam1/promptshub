@@ -14,13 +14,125 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      prompt_interactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          interaction_type: string
+          prompt_id: string | null
+          user_session: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          interaction_type: string
+          prompt_id?: string | null
+          user_session?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          interaction_type?: string
+          prompt_id?: string | null
+          user_session?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prompt_interactions_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "prompt_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prompt_interactions_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prompts: {
+        Row: {
+          author: string
+          category: string
+          content: string
+          created_at: string | null
+          description: string
+          id: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author: string
+          category?: string
+          content: string
+          created_at?: string | null
+          description: string
+          id?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author?: string
+          category?: string
+          content?: string
+          created_at?: string | null
+          description?: string
+          id?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      prompts_card: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      prompt_stats: {
+        Row: {
+          author: string | null
+          category: string | null
+          content: string | null
+          copies: number | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          likes: number | null
+          tags: string[] | null
+          title: string | null
+          updated_at: string | null
+          views: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      increment_interaction: {
+        Args: {
+          prompt_id_param: string
+          interaction_type_param: string
+          user_session_param: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

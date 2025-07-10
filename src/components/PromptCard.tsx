@@ -1,10 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Heart, Eye, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useIncrementInteraction } from "@/hooks/usePrompts";
 
 interface Prompt {
   id: string;
@@ -16,6 +17,7 @@ interface Prompt {
   author: string;
   likes: number;
   views: number;
+  copies: number;
 }
 
 interface PromptCardProps {
@@ -25,11 +27,32 @@ interface PromptCardProps {
 export const PromptCard = ({ prompt }: PromptCardProps) => {
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [viewLogged, setViewLogged] = useState(false);
+  
+  const incrementInteractionMutation = useIncrementInteraction();
+
+  // Log view when component mounts
+  useEffect(() => {
+    if (!viewLogged) {
+      incrementInteractionMutation.mutate({ 
+        promptId: prompt.id, 
+        interactionType: 'view' 
+      });
+      setViewLogged(true);
+    }
+  }, [prompt.id, viewLogged, incrementInteractionMutation]);
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(prompt.content);
       setCopied(true);
+      
+      // Log copy interaction
+      incrementInteractionMutation.mutate({ 
+        promptId: prompt.id, 
+        interactionType: 'copy' 
+      });
+      
       toast({
         title: "Copied to clipboard!",
         description: "The prompt has been copied to your clipboard.",
@@ -45,11 +68,19 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
   };
 
   const handleLike = () => {
-    setLiked(!liked);
-    toast({
-      title: liked ? "Removed from favorites" : "Added to favorites",
-      description: liked ? "Prompt removed from your favorites" : "Prompt added to your favorites",
-    });
+    if (!liked) {
+      // Log like interaction
+      incrementInteractionMutation.mutate({ 
+        promptId: prompt.id, 
+        interactionType: 'like' 
+      });
+      
+      setLiked(true);
+      toast({
+        title: "Added to favorites",
+        description: "Prompt added to your favorites",
+      });
+    }
   };
 
   return (
@@ -92,6 +123,10 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
             <div className="flex items-center gap-1">
               <Heart className="h-3 w-3" />
               {prompt.likes}
+            </div>
+            <div className="flex items-center gap-1">
+              <Copy className="h-3 w-3" />
+              {prompt.copies}
             </div>
           </div>
         </div>

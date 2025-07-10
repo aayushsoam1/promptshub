@@ -1,6 +1,7 @@
 
 import { PromptCard } from "@/components/PromptCard";
-import { prompts } from "@/data/prompts";
+import { usePrompts } from "@/hooks/usePrompts";
+import { CreatePromptDialog } from "@/components/CreatePromptDialog";
 
 interface FeaturedPromptsProps {
   selectedCategory: string;
@@ -8,14 +9,38 @@ interface FeaturedPromptsProps {
 }
 
 export const FeaturedPrompts = ({ selectedCategory, searchQuery }: FeaturedPromptsProps) => {
-  const filteredPrompts = prompts.filter((prompt) => {
+  const { data: prompts, isLoading, error } = usePrompts();
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⏳</div>
+          <p className="text-gray-600">Loading prompts...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <div className="text-4xl mb-4">❌</div>
+          <p className="text-gray-600">Error loading prompts. Please refresh the page.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const filteredPrompts = prompts?.filter((prompt) => {
     const matchesCategory = selectedCategory === "all" || prompt.category === selectedCategory;
     const matchesSearch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          prompt.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          prompt.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     
     return matchesCategory && matchesSearch;
-  });
+  }) || [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
@@ -23,9 +48,10 @@ export const FeaturedPrompts = ({ selectedCategory, searchQuery }: FeaturedPromp
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
           Featured Prompts
         </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
           Hand-picked prompts that deliver exceptional results across various use cases
         </p>
+        <CreatePromptDialog />
       </div>
 
       {filteredPrompts.length === 0 ? (
