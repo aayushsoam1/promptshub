@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -100,7 +99,7 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
 
       <CardContent className="py-3">
         <div className="bg-gray-50 rounded-lg p-4 mb-4 border-l-4 border-purple-500">
-          <p className="text-sm text-gray-700 line-clamp-3 font-mono">
+          <p className="text-sm text-gray-700 font-mono whitespace-pre-wrap break-words">
             {prompt.content}
           </p>
         </div>
