@@ -1,22 +1,23 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Play, Users, Zap, Terminal, ArrowRight } from "lucide-react";
+import { Play, Users, Zap, Terminal, ArrowRight, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
   const [visitorCount, setVisitorCount] = useState(0);
   const navigate = useNavigate();
 
-  // This will be connected to your backend API
   useEffect(() => {
-    // Placeholder for visitor count API call
-    // You can replace this with your backend API
-    setVisitorCount(12547); // Demo value
+    setVisitorCount(12547);
   }, []);
 
   const handleTryNow = () => {
     navigate("/try");
+  };
+
+  const handleSubscribe = () => {
+    navigate("/auth");
   };
 
   return (
@@ -104,7 +105,6 @@ const Landing = () => {
           
           <div className="bg-gray-900/50 border-2 border-green-500/30 rounded-lg p-6 max-w-4xl mx-auto">
             <div className="aspect-video bg-black border border-green-500/50 rounded-lg flex items-center justify-center relative overflow-hidden">
-              {/* Placeholder for YouTube video */}
               <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 to-black"></div>
               <div className="relative z-10 text-center">
                 <Play className="h-16 w-16 text-green-400 mx-auto mb-4 animate-pulse" />
@@ -114,7 +114,6 @@ const Landing = () => {
                 </p>
               </div>
               
-              {/* Matrix effect overlay */}
               <div className="absolute inset-0 opacity-10">
                 <div className="text-green-500 text-xs font-mono leading-3 break-all">
                   {Array.from({ length: 20 }, (_, i) => (
@@ -154,21 +153,32 @@ const Landing = () => {
           </div>
         </div>
 
-        {/* Try Now Button */}
-        <div className="text-center">
-          <Button
-            onClick={handleTryNow}
-            className="bg-green-900/50 hover:bg-green-800/50 text-green-300 border-2 border-green-500/50 hover:border-green-400 font-mono text-xl px-12 py-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/20"
-          >
-            <Terminal className="h-6 w-6 mr-3" />
-            {">"} TRY_NOW.exe
-            <ArrowRight className="h-6 w-6 ml-3 animate-pulse" />
-          </Button>
+        {/* Action Buttons */}
+        <div className="text-center space-y-6">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button
+              onClick={handleTryNow}
+              className="bg-green-900/50 hover:bg-green-800/50 text-green-300 border-2 border-green-500/50 hover:border-green-400 font-mono text-xl px-12 py-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/20"
+            >
+              <Terminal className="h-6 w-6 mr-3" />
+              {">"} TRY_PREVIEW.exe
+              <ArrowRight className="h-6 w-6 ml-3 animate-pulse" />
+            </Button>
+            
+            <Button
+              onClick={handleSubscribe}
+              className="bg-green-600/50 hover:bg-green-500/50 text-white border-2 border-green-400/50 hover:border-green-300 font-mono text-xl px-12 py-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-400/20"
+            >
+              <Mail className="h-6 w-6 mr-3" />
+              {">"} GET_FULL_ACCESS
+              <Zap className="h-6 w-6 ml-3 animate-bounce" />
+            </Button>
+          </div>
           
-          <p className="text-green-500/60 font-mono text-sm mt-4">
-            {"// "} ACCESS LIMITED PREVIEW MODE
+          <p className="text-green-500/60 font-mono text-sm">
+            {"// "} TRIAL: LIMITED PREVIEW MODE
             <br />
-            {"// "} LOGIN REQUIRED FOR FULL ACCESS
+            {"// "} SUBSCRIBE: ENTER EMAIL FOR FULL ACCESS
           </p>
         </div>
       </div>
