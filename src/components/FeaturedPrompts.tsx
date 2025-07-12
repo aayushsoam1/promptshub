@@ -1,13 +1,13 @@
 
 import { PromptCard } from "@/components/PromptCard";
+import { BlankPromptCard } from "@/components/BlankPromptCard";
 import { usePrompts } from "@/hooks/usePrompts";
-import { CreatePromptDialog } from "@/components/CreatePromptDialog";
 import { Terminal, Database, AlertTriangle } from "lucide-react";
 
 interface FeaturedPromptsProps {
   selectedCategory: string;
   searchQuery: string;
-  limitCards?: number; // New optional prop to limit cards
+  limitCards?: number;
 }
 
 export const FeaturedPrompts = ({ selectedCategory, searchQuery, limitCards }: FeaturedPromptsProps) => {
@@ -53,7 +53,7 @@ export const FeaturedPrompts = ({ selectedCategory, searchQuery, limitCards }: F
   }) || [];
 
   // Apply limit if specified
-  const displayPrompts = limitCards ? filteredPrompts.slice(0, limitCards) : filteredPrompts;
+  const displayPrompts = limitCards ? filteredPrompts.slice(0, limitCards - 1) : filteredPrompts;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
@@ -73,22 +73,20 @@ export const FeaturedPrompts = ({ selectedCategory, searchQuery, limitCards }: F
             {limitCards && (
               <>
                 <br />
-                {"// "} TRIAL_MODE: SHOWING {limitCards} OF {filteredPrompts.length} ENTRIES
+                {"// "} TRIAL_MODE: SHOWING {limitCards} OF {filteredPrompts.length + 1} ENTRIES
               </>
             )}
           </p>
         </div>
         
-        {!limitCards && <CreatePromptDialog />}
-        
         <div className="mt-6 font-mono text-xs text-green-500/60">
-          <p>{">"} TOTAL_ENTRIES: {limitCards ? `${limitCards}/${filteredPrompts.length}` : filteredPrompts.length}</p>
+          <p>{">"} TOTAL_ENTRIES: {limitCards ? `${limitCards}/${filteredPrompts.length + 1}` : filteredPrompts.length + 1}</p>
           <p>{">"} CATEGORY_FILTER: {selectedCategory.toUpperCase()}</p>
           {limitCards && <p>{">"} ACCESS_MODE: TRIAL_LIMITED</p>}
         </div>
       </div>
 
-      {displayPrompts.length === 0 ? (
+      {displayPrompts.length === 0 && !limitCards ? (
         <div className="text-center py-12">
           <div className="bg-gray-900/50 border-2 border-green-500/30 rounded-lg p-8 max-w-md mx-auto">
             <Terminal className="h-16 w-16 text-green-400 mx-auto mb-4" />
@@ -99,6 +97,10 @@ export const FeaturedPrompts = ({ selectedCategory, searchQuery, limitCards }: F
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Always show the blank prompt card first */}
+          <BlankPromptCard />
+          
+          {/* Then show the existing prompts */}
           {displayPrompts.map((prompt) => (
             <PromptCard key={prompt.id} prompt={prompt} />
           ))}
