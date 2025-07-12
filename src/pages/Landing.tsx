@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Play, Users, Zap, Terminal, ArrowRight, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useYouTubeVideo, getYouTubeVideoId } from "@/hooks/useYouTubeVideo";
 
 const Landing = () => {
   const [visitorCount, setVisitorCount] = useState(0);
   const navigate = useNavigate();
+  const { data: youtubeVideo, isLoading: isVideoLoading } = useYouTubeVideo();
 
   useEffect(() => {
     setVisitorCount(12547);
@@ -18,6 +20,11 @@ const Landing = () => {
 
   const handleSubscribe = () => {
     navigate("/auth");
+  };
+
+  const getEmbedUrl = (url: string) => {
+    const videoId = getYouTubeVideoId(url);
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
   };
 
   return (
@@ -105,29 +112,46 @@ const Landing = () => {
           
           <div className="bg-gray-900/50 border-2 border-green-500/30 rounded-lg p-6 max-w-4xl mx-auto">
             <div className="aspect-video bg-black border border-green-500/50 rounded-lg flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 to-black"></div>
-              <div className="relative z-10 text-center">
-                <Play className="h-16 w-16 text-green-400 mx-auto mb-4 animate-pulse" />
-                <p className="text-green-400 font-mono text-lg">{">"} VIDEO_LOADING...</p>
-                <p className="text-green-500/60 font-mono text-sm mt-2">
-                  {"// "} Replace this with your YouTube embed
-                </p>
-              </div>
-              
-              <div className="absolute inset-0 opacity-10">
-                <div className="text-green-500 text-xs font-mono leading-3 break-all">
-                  {Array.from({ length: 20 }, (_, i) => (
-                    <div key={i} className="animate-pulse">
-                      {Math.random().toString(36).substring(2, 15)}
-                    </div>
-                  ))}
+              {isVideoLoading ? (
+                <div className="relative z-10 text-center">
+                  <div className="animate-spin h-16 w-16 border-4 border-green-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+                  <p className="text-green-400 font-mono text-lg">{">"} LOADING_VIDEO...</p>
                 </div>
-              </div>
+              ) : youtubeVideo && getEmbedUrl(youtubeVideo.url) ? (
+                <iframe
+                  src={getEmbedUrl(youtubeVideo.url)}
+                  title={youtubeVideo.title}
+                  className="w-full h-full rounded-lg"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 to-black"></div>
+                  <div className="relative z-10 text-center">
+                    <Play className="h-16 w-16 text-green-400 mx-auto mb-4 animate-pulse" />
+                    <p className="text-green-400 font-mono text-lg">{">"} NO_VIDEO_FOUND</p>
+                    <p className="text-green-500/60 font-mono text-sm mt-2">
+                      {"// "} Add YouTube URL in Supabase
+                    </p>
+                  </div>
+                  
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="text-green-500 text-xs font-mono leading-3 break-all">
+                      {Array.from({ length: 20 }, (_, i) => (
+                        <div key={i} className="animate-pulse">
+                          {Math.random().toString(36).substring(2, 15)}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
             
             <div className="text-center mt-4">
               <p className="text-green-400 font-mono text-sm">
-                {">"} WATCH: Complete PromptHub Tutorial
+                {">"} WATCH: {youtubeVideo?.title || 'Complete PromptHub Tutorial'}
               </p>
             </div>
           </div>
