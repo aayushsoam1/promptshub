@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff, Terminal, Shield, Chrome } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -20,24 +21,14 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  // Check if user is already authenticated
+  // Redirect if already authenticated
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        navigate("/");
-      }
-    });
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        navigate("/");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    if (user) {
+      navigate("/prompts");
+    }
+  }, [user, navigate]);
 
   // Simple CAPTCHA implementation
   const [captchaQuestion, setCaptchaQuestion] = useState({ a: 0, b: 0, answer: 0 });
@@ -98,7 +89,7 @@ const Auth = () => {
           title: ">>> LOGIN_SUCCESS",
           description: "Access granted. Redirecting...",
         });
-        navigate("/");
+        navigate("/prompts");
       }
     } catch (error: any) {
       toast({
@@ -137,7 +128,7 @@ const Auth = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/prompts`,
           data: {
             full_name: fullName,
           }
@@ -177,7 +168,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`
+          redirectTo: `${window.location.origin}/prompts`
         }
       });
 
