@@ -38,7 +38,7 @@ const Landing = () => {
                 onClick={() => navigate("/auth")}
                 className="bg-green-900/50 hover:bg-green-800/50 text-green-300 border border-green-500/50 font-mono"
               >
-                {">"} LOGIN
+                {">"} SUBSCRIBE
               </Button>
             </div>
           </div>
@@ -224,8 +224,8 @@ const Landing = () => {
                   <div className="font-mono text-green-300">
                     <p className="text-green-400 mb-4">{">> "} STEP_01: ACCESS_SYSTEM</p>
                     <p className="text-sm mb-2">{"// "} Click "TRY_NOW" for limited preview mode</p>
-                    <p className="text-sm mb-2">{"// "} Click "FULL_ACCESS" to create account</p>
-                    <p className="text-sm">{"// "} Google authentication available</p>
+                    <p className="text-sm mb-2">{"// "} Click "FULL_ACCESS" to subscribe with email</p>
+                    <p className="text-sm">{"// "} Instant access to all 500+ prompts</p>
                   </div>
                 </CardContent>
               </Card>
