@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X, Terminal, Code } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useCreatePrompt } from "@/hooks/usePrompts";
 
 const categories = [
@@ -71,64 +71,59 @@ export const CreatePromptDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="mb-8 bg-green-900/50 hover:bg-green-800/50 text-green-300 border border-green-500/50 hover:border-green-400 font-mono">
+        <Button className="mb-8 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
           <Plus className="h-4 w-4 mr-2" />
-          {">"} CREATE_NEW_PROMPT
+          Create New Prompt
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto bg-gray-900/90 border-2 border-green-500/50 text-green-300">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-green-400 font-mono flex items-center">
-            <Terminal className="h-5 w-5 mr-2" />
-            {">"} NEW_PROMPT_ENTRY
-          </DialogTitle>
+          <DialogTitle>Create New Prompt</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title" className="text-green-400 font-mono text-sm">PROMPT_TITLE:</Label>
+            <Label htmlFor="title">Title</Label>
             <Input
               id="title"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="Enter prompt title"
-              className="bg-gray-800/50 border-green-500/30 text-green-300 font-mono focus:border-green-400"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="description" className="text-green-400 font-mono text-sm">DESCRIPTION:</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Brief description of what this prompt does"
-              className="bg-gray-800/50 border-green-500/30 text-green-300 font-mono focus:border-green-400"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="content" className="text-green-400 font-mono text-sm">PROMPT_CONTENT:</Label>
+            <Label htmlFor="content">Prompt Content</Label>
             <Textarea
               id="content"
               value={formData.content}
               onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               placeholder="The actual prompt text that will be copied"
-              className="min-h-[120px] bg-gray-800/50 border-green-500/30 text-green-300 font-mono focus:border-green-400"
+              className="min-h-[120px]"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="category" className="text-green-400 font-mono text-sm">CATEGORY:</Label>
+            <Label htmlFor="category">Category</Label>
             <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-              <SelectTrigger className="bg-gray-800/50 border-green-500/30 text-green-300 font-mono focus:border-green-400">
+              <SelectTrigger>
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-900 border-green-500/50 text-green-300">
+              <SelectContent>
                 {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id} className="text-green-300 focus:bg-green-900/50">
+                  <SelectItem key={category.id} value={category.id}>
                     {category.icon} {category.name}
                   </SelectItem>
                 ))}
@@ -137,34 +132,32 @@ export const CreatePromptDialog = () => {
           </div>
 
           <div>
-            <Label htmlFor="author" className="text-green-400 font-mono text-sm">AUTHOR_NAME:</Label>
+            <Label htmlFor="author">Author Name</Label>
             <Input
               id="author"
               value={formData.author}
               onChange={(e) => setFormData({ ...formData, author: e.target.value })}
               placeholder="Your name"
-              className="bg-gray-800/50 border-green-500/30 text-green-300 font-mono focus:border-green-400"
               required
             />
           </div>
 
           <div>
-            <Label className="text-green-400 font-mono text-sm">TAGS:</Label>
+            <Label>Tags</Label>
             <div className="flex gap-2 mb-2">
               <Input
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
                 placeholder="Add a tag"
-                className="bg-gray-800/50 border-green-500/30 text-green-300 font-mono focus:border-green-400"
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
               />
-              <Button type="button" onClick={addTag} className="bg-green-900/50 hover:bg-green-800/50 text-green-300 border border-green-500/50 font-mono">
-                ADD
+              <Button type="button" onClick={addTag} variant="outline">
+                Add
               </Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
-                <Badge key={tag} className="bg-green-900/50 text-green-300 border border-green-500/30">
+                <Badge key={tag} variant="secondary" className="bg-purple-100 text-purple-700">
                   {tag}
                   <X 
                     className="h-3 w-3 ml-1 cursor-pointer" 
@@ -176,12 +169,11 @@ export const CreatePromptDialog = () => {
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Button type="submit" disabled={createPromptMutation.isPending} className="bg-green-900/50 hover:bg-green-800/50 text-green-300 border border-green-500/50 font-mono">
-              <Code className="h-4 w-4 mr-2" />
-              {createPromptMutation.isPending ? "CREATING..." : "{"} CREATE {"}"}
+            <Button type="submit" disabled={createPromptMutation.isPending}>
+              {createPromptMutation.isPending ? "Creating..." : "Create Prompt"}
             </Button>
-            <Button type="button" onClick={() => setOpen(false)} className="bg-gray-800/50 hover:bg-gray-700/50 text-green-400 border border-green-500/30 font-mono">
-              CANCEL
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Cancel
             </Button>
           </div>
         </form>
