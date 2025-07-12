@@ -7,9 +7,10 @@ import { Terminal, Database, AlertTriangle } from "lucide-react";
 interface FeaturedPromptsProps {
   selectedCategory: string;
   searchQuery: string;
+  limitCards?: number; // New optional prop to limit cards
 }
 
-export const FeaturedPrompts = ({ selectedCategory, searchQuery }: FeaturedPromptsProps) => {
+export const FeaturedPrompts = ({ selectedCategory, searchQuery, limitCards }: FeaturedPromptsProps) => {
   const { data: prompts, isLoading, error } = usePrompts();
 
   if (isLoading) {
@@ -51,6 +52,9 @@ export const FeaturedPrompts = ({ selectedCategory, searchQuery }: FeaturedPromp
     return matchesCategory && matchesSearch;
   }) || [];
 
+  // Apply limit if specified
+  const displayPrompts = limitCards ? filteredPrompts.slice(0, limitCards) : filteredPrompts;
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
@@ -66,18 +70,25 @@ export const FeaturedPrompts = ({ selectedCategory, searchQuery }: FeaturedPromp
             {"// "} HAND-PICKED PROMPT ENTRIES FOR MAXIMUM EFFICIENCY
             <br />
             {"// "} OPTIMIZED FOR VARIOUS AI MODEL INTERACTIONS
+            {limitCards && (
+              <>
+                <br />
+                {"// "} TRIAL_MODE: SHOWING {limitCards} OF {filteredPrompts.length} ENTRIES
+              </>
+            )}
           </p>
         </div>
         
-        <CreatePromptDialog />
+        {!limitCards && <CreatePromptDialog />}
         
         <div className="mt-6 font-mono text-xs text-green-500/60">
-          <p>{">"} TOTAL_ENTRIES: {filteredPrompts.length}</p>
+          <p>{">"} TOTAL_ENTRIES: {limitCards ? `${limitCards}/${filteredPrompts.length}` : filteredPrompts.length}</p>
           <p>{">"} CATEGORY_FILTER: {selectedCategory.toUpperCase()}</p>
+          {limitCards && <p>{">"} ACCESS_MODE: TRIAL_LIMITED</p>}
         </div>
       </div>
 
-      {filteredPrompts.length === 0 ? (
+      {displayPrompts.length === 0 ? (
         <div className="text-center py-12">
           <div className="bg-gray-900/50 border-2 border-green-500/30 rounded-lg p-8 max-w-md mx-auto">
             <Terminal className="h-16 w-16 text-green-400 mx-auto mb-4" />
@@ -88,7 +99,7 @@ export const FeaturedPrompts = ({ selectedCategory, searchQuery }: FeaturedPromp
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPrompts.map((prompt) => (
+          {displayPrompts.map((prompt) => (
             <PromptCard key={prompt.id} prompt={prompt} />
           ))}
         </div>
