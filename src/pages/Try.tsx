@@ -30,8 +30,7 @@ const Try = () => {
   }, []);
 
   const handleLogin = () => {
-    // Navigate to main page (you can implement actual login later)
-    navigate("/");
+    navigate("/auth");
   };
 
   return (
