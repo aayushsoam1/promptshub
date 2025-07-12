@@ -5,11 +5,14 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { Terminal, Mail, Zap, ArrowLeft } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
   const navigate = useNavigate();
+  const subscriptionMutation = useSubscription();
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,16 +36,33 @@ const Auth = () => {
     }
 
     setIsSubscribing(true);
+    setTimeLeft(20);
     
-    // Simulate subscription process
-    setTimeout(() => {
+    try {
+      // Save email to Supabase
+      await subscriptionMutation.mutateAsync(email);
+      
+      // Start 20-second countdown
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setIsSubscribing(false);
+            toast({
+              title: "Welcome to PromptHub!",
+              description: "You now have full access to all prompts!",
+            });
+            navigate("/prompts");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+    } catch (error) {
       setIsSubscribing(false);
-      toast({
-        title: "Welcome to PromptHub!",
-        description: "You now have full access to all prompts!",
-      });
-      navigate("/prompts");
-    }, 2000);
+      setTimeLeft(0);
+    }
   };
 
   return (
@@ -66,6 +86,7 @@ const Auth = () => {
         onClick={() => navigate("/")}
         variant="outline"
         className="fixed top-4 left-4 bg-transparent border-green-500/30 text-green-400 hover:bg-green-900/20 font-mono"
+        disabled={isSubscribing}
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
         {">"} BACK
@@ -102,6 +123,7 @@ const Auth = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-gray-800/50 border-green-500/30 text-green-300 placeholder:text-green-500/50 font-mono focus:border-green-400"
                 required
+                disabled={isSubscribing}
               />
             </div>
             
@@ -113,7 +135,7 @@ const Auth = () => {
               {isSubscribing ? (
                 <>
                   <Terminal className="h-4 w-4 mr-2 animate-spin" />
-                  {">"} PROCESSING_SUBSCRIPTION...
+                  {">"} PROCESSING... ({timeLeft}s)
                 </>
               ) : (
                 <>

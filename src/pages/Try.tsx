@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { Terminal, Mail, Zap } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const Try = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -15,7 +16,9 @@ const Try = () => {
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
   const navigate = useNavigate();
+  const subscriptionMutation = useSubscription();
 
   const handleSubscribe = async () => {
     if (!email) {
@@ -27,17 +30,43 @@ const Try = () => {
       return;
     }
 
-    setIsSubscribing(true);
-    
-    // Simulate subscription process
-    setTimeout(() => {
-      setIsSubscribing(false);
+    if (!/\S+@\S+\.\S+/.test(email)) {
       toast({
-        title: "Success!",
-        description: "You now have full access to all prompts!",
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
       });
-      navigate("/prompts");
-    }, 1500);
+      return;
+    }
+
+    setIsSubscribing(true);
+    setTimeLeft(20);
+
+    try {
+      // Save email to Supabase
+      await subscriptionMutation.mutateAsync(email);
+      
+      // Start 20-second countdown
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setIsSubscribing(false);
+            toast({
+              title: "Success!",
+              description: "You now have full access to all prompts!",
+            });
+            navigate("/prompts");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+    } catch (error) {
+      setIsSubscribing(false);
+      setTimeLeft(0);
+    }
   };
 
   return (
@@ -81,6 +110,7 @@ const Try = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-gray-800/50 border-green-500/30 text-green-300 placeholder:text-green-500/50 font-mono"
+                disabled={isSubscribing}
               />
               
               <Button
@@ -89,13 +119,14 @@ const Try = () => {
                 className="w-full bg-green-900/50 hover:bg-green-800/50 text-green-300 border border-green-500/50 hover:border-green-400 font-mono"
               >
                 <Terminal className="h-4 w-4 mr-2" />
-                {isSubscribing ? "PROCESSING..." : ">"} GET_ACCESS
+                {isSubscribing ? `PROCESSING... (${timeLeft}s)` : ">"} GET_ACCESS
               </Button>
               
               <Button
                 onClick={() => setShowSubscribeModal(false)}
                 variant="outline"
                 className="w-full bg-transparent border-green-500/30 text-green-400 hover:bg-green-900/20 font-mono"
+                disabled={isSubscribing}
               >
                 {">"} CONTINUE_TRIAL
               </Button>
