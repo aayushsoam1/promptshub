@@ -1,28 +1,35 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Play, Users, Zap, Terminal, ArrowRight, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 const Landing = () => {
   const [visitorCount, setVisitorCount] = useState(0);
   const navigate = useNavigate();
+
   useEffect(() => {
     setVisitorCount(12547);
   }, []);
+
   const handleTryNow = () => {
     navigate("/try");
   };
+
   const handleSubscribe = () => {
     navigate("/auth");
   };
-  return <div className="min-h-screen bg-black relative overflow-hidden">
+
+  return (
+    <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Matrix rain background effect */}
       <div className="fixed inset-0 opacity-10 pointer-events-none">
         <div className="text-green-500 text-xs font-mono leading-3 break-all animate-pulse">
-          {Array.from({
-          length: 100
-        }, (_, i) => <div key={i} className="float-left w-4">
+          {Array.from({ length: 100 }, (_, i) => (
+            <div key={i} className="float-left w-4">
               {Math.random().toString(36).substring(2, 15)}
-            </div>)}
+            </div>
+          ))}
         </div>
       </div>
       
@@ -109,17 +116,19 @@ const Landing = () => {
               
               <div className="absolute inset-0 opacity-10">
                 <div className="text-green-500 text-xs font-mono leading-3 break-all">
-                  {Array.from({
-                  length: 20
-                }, (_, i) => <div key={i} className="animate-pulse">
+                  {Array.from({ length: 20 }, (_, i) => (
+                    <div key={i} className="animate-pulse">
                       {Math.random().toString(36).substring(2, 15)}
-                    </div>)}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
             
             <div className="text-center mt-4">
-              
+              <p className="text-green-400 font-mono text-sm">
+                {">"} WATCH: Complete PromptHub Tutorial
+              </p>
             </div>
           </div>
         </div>
@@ -147,13 +156,19 @@ const Landing = () => {
         {/* Action Buttons */}
         <div className="text-center space-y-6">
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button onClick={handleTryNow} className="bg-green-900/50 hover:bg-green-800/50 text-green-300 border-2 border-green-500/50 hover:border-green-400 font-mono text-xl px-12 py-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/20">
+            <Button
+              onClick={handleTryNow}
+              className="bg-green-900/50 hover:bg-green-800/50 text-green-300 border-2 border-green-500/50 hover:border-green-400 font-mono text-xl px-12 py-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/20"
+            >
               <Terminal className="h-6 w-6 mr-3" />
               {">"} TRY_PREVIEW.exe
               <ArrowRight className="h-6 w-6 ml-3 animate-pulse" />
             </Button>
             
-            <Button onClick={handleSubscribe} className="bg-green-600/50 hover:bg-green-500/50 text-white border-2 border-green-400/50 hover:border-green-300 font-mono text-xl px-12 py-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-400/20">
+            <Button
+              onClick={handleSubscribe}
+              className="bg-green-600/50 hover:bg-green-500/50 text-white border-2 border-green-400/50 hover:border-green-300 font-mono text-xl px-12 py-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-400/20"
+            >
               <Mail className="h-6 w-6 mr-3" />
               {">"} GET_FULL_ACCESS
               <Zap className="h-6 w-6 ml-3 animate-bounce" />
@@ -167,6 +182,8 @@ const Landing = () => {
           </p>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Landing;
