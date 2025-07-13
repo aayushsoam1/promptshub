@@ -215,7 +215,7 @@ export const PromptCard = ({
           <div className="flex-1 min-h-0">
             <div className="mb-4">
               <div className="text-sm text-green-400 mb-3 font-mono">PROMPT_DATA:</div>
-              <ScrollArea className="h-[200px] w-full rounded-lg border border-green-500/30 bg-gray-900/50 p-4 mx-0 my-[-19px] px-[16px]">
+              <ScrollArea className="h-[200px] w-full rounded-lg border border-green-500/30 bg-gray-900/50 p-4 mx-0 my-[-3px] px-[16px]">
                 <pre className="text-sm text-green-300 font-mono whitespace-pre-wrap break-words leading-relaxed">
                   {prompt.content}
                 </pre>
