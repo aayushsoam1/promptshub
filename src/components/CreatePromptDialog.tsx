@@ -7,8 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Search } from "lucide-react";
 import { useCreatePrompt } from "@/hooks/usePrompts";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const categories = [
   { id: "writing", name: "Writing", icon: "✍️" },
@@ -17,10 +19,40 @@ const categories = [
   { id: "design", name: "Design", icon: "🎨" },
   { id: "business", name: "Business", icon: "💼" },
   { id: "education", name: "Education", icon: "📚" },
+  { id: "science", name: "Science & Innovation", icon: "🧪" },
+  { id: "finance", name: "Finance & Economy", icon: "📊" },
+  { id: "career", name: "Career & Jobs", icon: "🎓" },
+  { id: "lifestyle", name: "Lifestyle & Home", icon: "🏠" },
+  { id: "food", name: "Food & Recipes", icon: "🍳" },
+  { id: "pets", name: "Pets & Animals", icon: "🐾" },
+  { id: "entertainment", name: "Arts & Entertainment", icon: "🎵" },
+  { id: "history", name: "History & Culture", icon: "🗺️" },
+  { id: "apps", name: "Apps & Tools", icon: "📱" },
+  { id: "mindfulness", name: "Mindfulness & Spirituality", icon: "🧘" },
+  { id: "technology", name: "Technology & AI", icon: "🌐" },
+  { id: "games", name: "Games & Fun", icon: "🎮" },
+  { id: "psychology", name: "Psychology & Self-help", icon: "🧠" },
+  { id: "health", name: "Health & Fitness", icon: "🩺" },
+  { id: "graphics", name: "Image & Graphics", icon: "🖼️" },
+  { id: "video", name: "Video & Animation", icon: "🎬" },
+  { id: "audio", name: "Audio & Podcasting", icon: "🎙️" },
+  { id: "content", name: "Content Creation", icon: "✨" },
+  { id: "photography", name: "Photography", icon: "📷" },
+  { id: "videography", name: "Videography", icon: "📹" },
+  { id: "script", name: "Script & Storyboarding", icon: "📄" },
+  { id: "voice", name: "Voice & Dubbing", icon: "🎭" },
+  { id: "digital-art", name: "Digital Art", icon: "🎨" },
+  { id: "tools", name: "Creator Tools & Resources", icon: "🧰" },
+  { id: "ai-tools", name: "AI Tools for Creators", icon: "🤖" },
+  { id: "publishing", name: "Publishing & Distribution", icon: "📤" },
+  { id: "copywriting", name: "Copywriting for Creators", icon: "📝" },
+  { id: "analytics", name: "Analytics & Monetization", icon: "📈" },
+  { id: "targeting", name: "Niche Audience Targeting", icon: "🎯" },
 ];
 
 export const CreatePromptDialog = () => {
   const [open, setOpen] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -67,6 +99,8 @@ export const CreatePromptDialog = () => {
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
+
+  const selectedCategory = categories.find(cat => cat.id === formData.category);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -116,19 +150,47 @@ export const CreatePromptDialog = () => {
           </div>
 
           <div>
-            <Label htmlFor="category">Category</Label>
-            <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.icon} {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label>Category</Label>
+            <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={categoryOpen}
+                  className="w-full justify-between"
+                >
+                  {selectedCategory ? (
+                    <span>{selectedCategory.icon} {selectedCategory.name}</span>
+                  ) : (
+                    "Select category..."
+                  )}
+                  <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0">
+                <Command>
+                  <CommandInput placeholder="Search categories..." />
+                  <CommandEmpty>No category found.</CommandEmpty>
+                  <CommandList>
+                    <CommandGroup>
+                      {categories.map((category) => (
+                        <CommandItem
+                          key={category.id}
+                          value={category.name}
+                          onSelect={() => {
+                            setFormData({ ...formData, category: category.id });
+                            setCategoryOpen(false);
+                          }}
+                        >
+                          <span className="mr-2">{category.icon}</span>
+                          {category.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div>

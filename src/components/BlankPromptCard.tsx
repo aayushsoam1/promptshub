@@ -1,14 +1,14 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X, Save, Terminal } from "lucide-react";
+import { Plus, X, Save, Terminal, Search } from "lucide-react";
 import { useCreatePrompt } from "@/hooks/usePrompts";
 import { toast } from "@/hooks/use-toast";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const categories = [
   { id: "writing", name: "Writing", icon: "✍️" },
@@ -17,10 +17,40 @@ const categories = [
   { id: "design", name: "Design", icon: "🎨" },
   { id: "business", name: "Business", icon: "💼" },
   { id: "education", name: "Education", icon: "📚" },
+  { id: "science", name: "Science & Innovation", icon: "🧪" },
+  { id: "finance", name: "Finance & Economy", icon: "📊" },
+  { id: "career", name: "Career & Jobs", icon: "🎓" },
+  { id: "lifestyle", name: "Lifestyle & Home", icon: "🏠" },
+  { id: "food", name: "Food & Recipes", icon: "🍳" },
+  { id: "pets", name: "Pets & Animals", icon: "🐾" },
+  { id: "entertainment", name: "Arts & Entertainment", icon: "🎵" },
+  { id: "history", name: "History & Culture", icon: "🗺️" },
+  { id: "apps", name: "Apps & Tools", icon: "📱" },
+  { id: "mindfulness", name: "Mindfulness & Spirituality", icon: "🧘" },
+  { id: "technology", name: "Technology & AI", icon: "🌐" },
+  { id: "games", name: "Games & Fun", icon: "🎮" },
+  { id: "psychology", name: "Psychology & Self-help", icon: "🧠" },
+  { id: "health", name: "Health & Fitness", icon: "🩺" },
+  { id: "graphics", name: "Image & Graphics", icon: "🖼️" },
+  { id: "video", name: "Video & Animation", icon: "🎬" },
+  { id: "audio", name: "Audio & Podcasting", icon: "🎙️" },
+  { id: "content", name: "Content Creation", icon: "✨" },
+  { id: "photography", name: "Photography", icon: "📷" },
+  { id: "videography", name: "Videography", icon: "📹" },
+  { id: "script", name: "Script & Storyboarding", icon: "📄" },
+  { id: "voice", name: "Voice & Dubbing", icon: "🎭" },
+  { id: "digital-art", name: "Digital Art", icon: "🎨" },
+  { id: "tools", name: "Creator Tools & Resources", icon: "🧰" },
+  { id: "ai-tools", name: "AI Tools for Creators", icon: "🤖" },
+  { id: "publishing", name: "Publishing & Distribution", icon: "📤" },
+  { id: "copywriting", name: "Copywriting for Creators", icon: "📝" },
+  { id: "analytics", name: "Analytics & Monetization", icon: "📈" },
+  { id: "targeting", name: "Niche Audience Targeting", icon: "🎯" },
 ];
 
 export const BlankPromptCard = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -70,6 +100,8 @@ export const BlankPromptCard = () => {
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
   };
+
+  const selectedCategory = categories.find(cat => cat.id === formData.category);
 
   if (!isEditing) {
     return (
@@ -164,19 +196,48 @@ export const BlankPromptCard = () => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-            <SelectTrigger className="bg-gray-900/50 border-green-500/30 text-green-300 font-mono text-sm">
-              <SelectValue placeholder="CATEGORY" />
-            </SelectTrigger>
-            <SelectContent className="bg-gray-900 border-green-500/30">
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id} className="text-green-300 font-mono">
-                  {category.icon} {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="grid grid-cols-1 gap-2">
+          <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={categoryOpen}
+                className="w-full justify-between bg-gray-900/50 border-green-500/30 text-green-300 font-mono text-sm"
+              >
+                {selectedCategory ? (
+                  <span>{selectedCategory.icon} {selectedCategory.name}</span>
+                ) : (
+                  "SELECT_CATEGORY..."
+                )}
+                <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0 bg-gray-900 border-green-500/30">
+              <Command className="bg-gray-900">
+                <CommandInput placeholder="Search categories..." className="text-green-300" />
+                <CommandEmpty className="text-green-500/70">No category found.</CommandEmpty>
+                <CommandList className="max-h-48">
+                  <CommandGroup>
+                    {categories.map((category) => (
+                      <CommandItem
+                        key={category.id}
+                        value={category.name}
+                        className="text-green-300 hover:bg-green-900/30"
+                        onSelect={() => {
+                          setFormData({ ...formData, category: category.id });
+                          setCategoryOpen(false);
+                        }}
+                      >
+                        <span className="mr-2">{category.icon}</span>
+                        {category.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
 
           <Input
             value={formData.author}
