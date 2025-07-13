@@ -47,10 +47,10 @@ const categories = [
 
 export const CategoryFilter = ({ selectedCategory, setSelectedCategory }: CategoryFilterProps) => {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 border-b border-green-500/20">
+    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 border-b border-border">
       <div className="text-center mb-6">
-        <p className="text-green-400 font-mono text-sm">{">"} SELECT_CATEGORY.exe</p>
-        <div className="h-px bg-gradient-to-r from-transparent via-green-500/50 to-transparent mt-2"></div>
+        <p className="text-foreground font-mono text-sm">{">"} SELECT_CATEGORY.exe</p>
+        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mt-2"></div>
       </div>
       
       <div className="flex flex-wrap gap-3 justify-center max-h-96 overflow-y-auto">
@@ -61,8 +61,8 @@ export const CategoryFilter = ({ selectedCategory, setSelectedCategory }: Catego
             onClick={() => setSelectedCategory(category.id)}
             className={`px-4 py-2 font-mono text-xs border-2 transition-all duration-300 whitespace-nowrap ${
               selectedCategory === category.id
-                ? "bg-green-900/50 border-green-400 text-green-300 shadow-lg shadow-green-500/20 scale-105"
-                : "bg-gray-900/50 border-green-500/30 text-green-400 hover:bg-green-900/30 hover:border-green-400/50 hover:scale-105"
+                ? "bg-foreground text-background border-foreground shadow-lg scale-105"
+                : "bg-background text-foreground border-border hover:border-foreground hover:scale-105"
             }`}
           >
             <span className="mr-2 text-sm">{category.icon}</span>
@@ -72,7 +72,7 @@ export const CategoryFilter = ({ selectedCategory, setSelectedCategory }: Catego
       </div>
       
       <div className="text-center mt-4">
-        <p className="text-green-500/60 font-mono text-xs">
+        <p className="text-muted-foreground font-mono text-xs">
           {">"} FILTER_STATUS: {selectedCategory.toUpperCase()}_SELECTED
         </p>
       </div>
