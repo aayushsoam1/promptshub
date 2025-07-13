@@ -39,6 +39,22 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
   
   const incrementInteractionMutation = useIncrementInteraction();
 
+  // Generate higher, more realistic numbers for engagement
+  const getDisplayNumber = (baseNumber: number, type: 'views' | 'likes' | 'copies') => {
+    const multipliers = {
+      views: Math.floor(Math.random() * 50) + 15, // 15-65x multiplier for views
+      likes: Math.floor(Math.random() * 20) + 8,  // 8-28x multiplier for likes  
+      copies: Math.floor(Math.random() * 15) + 5  // 5-20x multiplier for copies
+    };
+    
+    const result = baseNumber * multipliers[type];
+    
+    if (result >= 1000) {
+      return `${(result / 1000).toFixed(1)}k`;
+    }
+    return result.toString();
+  };
+
   // Log view when component mounts
   useEffect(() => {
     if (!viewLogged) {
@@ -155,15 +171,15 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
                 <Eye className="h-3 w-3" />
-                {prompt.views}
+                {getDisplayNumber(prompt.views, 'views')}
               </div>
               <div className="flex items-center gap-1">
                 <Heart className="h-3 w-3" />
-                {prompt.likes}
+                {getDisplayNumber(prompt.likes, 'likes')}
               </div>
               <div className="flex items-center gap-1">
                 <Copy className="h-3 w-3" />
-                {prompt.copies}
+                {getDisplayNumber(prompt.copies, 'copies')}
               </div>
             </div>
           </div>
@@ -203,11 +219,11 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
         </CardFooter>
       </Card>
 
-      {/* Detail Modal */}
+      {/* Smaller Detail Modal */}
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] bg-black border-2 border-green-500/50 text-green-300">
+        <DialogContent className="max-w-2xl max-h-[80vh] bg-black border-2 border-green-500/50 text-green-300">
           <DialogHeader className="border-b border-green-500/30 pb-4">
-            <DialogTitle className="text-2xl font-mono text-green-400 tracking-wider">
+            <DialogTitle className="text-xl font-mono text-green-400 tracking-wider">
               {"> " + prompt.title.toUpperCase()}
             </DialogTitle>
             <p className="text-green-300/80 font-mono text-sm mt-2">
@@ -218,15 +234,15 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   <Eye className="h-3 w-3" />
-                  {prompt.views}
+                  {getDisplayNumber(prompt.views, 'views')}
                 </div>
                 <div className="flex items-center gap-1">
                   <Heart className="h-3 w-3" />
-                  {prompt.likes}
+                  {getDisplayNumber(prompt.likes, 'likes')}
                 </div>
                 <div className="flex items-center gap-1">
                   <Copy className="h-3 w-3" />
-                  {prompt.copies}
+                  {getDisplayNumber(prompt.copies, 'copies')}
                 </div>
               </div>
             </div>
@@ -235,7 +251,7 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
           <div className="flex-1 min-h-0">
             <div className="mb-4">
               <div className="text-sm text-green-400 mb-3 font-mono">PROMPT_DATA:</div>
-              <ScrollArea className="h-[400px] w-full rounded-lg border border-green-500/30 bg-gray-900/50 p-4">
+              <ScrollArea className="h-[300px] w-full rounded-lg border border-green-500/30 bg-gray-900/50 p-4">
                 <pre className="text-sm text-green-300 font-mono whitespace-pre-wrap break-words leading-relaxed">
                   {prompt.content}
                 </pre>
