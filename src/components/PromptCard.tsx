@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -110,11 +109,13 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
       </CardHeader>
 
       <CardContent className="py-3 relative z-10">
-        <div className="bg-gray-900/80 rounded-lg p-4 mb-4 border border-green-500/30 backdrop-blur-sm">
+        <div className="bg-gray-900/80 rounded-lg p-4 mb-4 border border-green-500/30 backdrop-blur-sm h-32 overflow-hidden">
           <div className="text-xs text-green-400 mb-2 font-mono">PROMPT_DATA:</div>
-          <p className="text-sm text-green-300 font-mono whitespace-pre-wrap break-words leading-relaxed">
-            {prompt.content}
-          </p>
+          <div className="h-24 overflow-hidden">
+            <p className="text-sm text-green-300 font-mono whitespace-pre-wrap break-words leading-relaxed">
+              {prompt.content}
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-4">
