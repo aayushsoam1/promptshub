@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Hero } from "@/components/Hero";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { FeaturedPrompts } from "@/components/FeaturedPrompts";
@@ -20,18 +20,6 @@ const Try = () => {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const navigate = useNavigate();
   const { userProfile, getOrCreateProfile } = useUserProfile();
-  
-  // Auto-prompt for subscription after 20 seconds
-  useEffect(() => {
-    const currentUserEmail = localStorage.getItem('user_email');
-    const timer = setTimeout(() => {
-      if (!currentUserEmail) {
-        setShowSubscribeModal(true);
-      }
-    }, 20000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const validateGmailEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@gmail\.com$/i;
