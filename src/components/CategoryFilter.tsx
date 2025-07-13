@@ -14,6 +14,35 @@ const categories = [
   { id: "design", name: "DESIGN", icon: "🎨" },
   { id: "business", name: "BUSINESS", icon: "💼" },
   { id: "education", name: "EDUCATION", icon: "📚" },
+  { id: "science", name: "SCIENCE_&_INNOVATION", icon: "🧪" },
+  { id: "finance", name: "FINANCE_&_ECONOMY", icon: "📊" },
+  { id: "career", name: "CAREER_&_JOBS", icon: "🎓" },
+  { id: "lifestyle", name: "LIFESTYLE_&_HOME", icon: "🏠" },
+  { id: "food", name: "FOOD_&_RECIPES", icon: "🍳" },
+  { id: "pets", name: "PETS_&_ANIMALS", icon: "🐾" },
+  { id: "entertainment", name: "ARTS_&_ENTERTAINMENT", icon: "🎵" },
+  { id: "history", name: "HISTORY_&_CULTURE", icon: "🗺️" },
+  { id: "apps", name: "APPS_&_TOOLS", icon: "📱" },
+  { id: "mindfulness", name: "MINDFULNESS_&_SPIRITUALITY", icon: "🧘" },
+  { id: "technology", name: "TECHNOLOGY_&_AI", icon: "🌐" },
+  { id: "games", name: "GAMES_&_FUN", icon: "🎮" },
+  { id: "psychology", name: "PSYCHOLOGY_&_SELF-HELP", icon: "🧠" },
+  { id: "health", name: "HEALTH_&_FITNESS", icon: "🩺" },
+  { id: "graphics", name: "IMAGE_&_GRAPHICS", icon: "🖼️" },
+  { id: "video", name: "VIDEO_&_ANIMATION", icon: "🎬" },
+  { id: "audio", name: "AUDIO_&_PODCASTING", icon: "🎙️" },
+  { id: "content", name: "CONTENT_CREATION", icon: "✨" },
+  { id: "photography", name: "PHOTOGRAPHY", icon: "📷" },
+  { id: "videography", name: "VIDEOGRAPHY", icon: "📹" },
+  { id: "script", name: "SCRIPT_&_STORYBOARDING", icon: "📄" },
+  { id: "voice", name: "VOICE_&_DUBBING", icon: "🎭" },
+  { id: "digital-art", name: "DIGITAL_ART", icon: "🎨" },
+  { id: "tools", name: "CREATOR_TOOLS_&_RESOURCES", icon: "🧰" },
+  { id: "ai-tools", name: "AI_TOOLS_FOR_CREATORS", icon: "🤖" },
+  { id: "publishing", name: "PUBLISHING_&_DISTRIBUTION", icon: "📤" },
+  { id: "copywriting", name: "COPYWRITING_FOR_CREATORS", icon: "📝" },
+  { id: "analytics", name: "ANALYTICS_&_MONETIZATION", icon: "📈" },
+  { id: "targeting", name: "NICHE_AUDIENCE_TARGETING", icon: "🎯" },
 ];
 
 export const CategoryFilter = ({ selectedCategory, setSelectedCategory }: CategoryFilterProps) => {
@@ -24,19 +53,19 @@ export const CategoryFilter = ({ selectedCategory, setSelectedCategory }: Catego
         <div className="h-px bg-gradient-to-r from-transparent via-green-500/50 to-transparent mt-2"></div>
       </div>
       
-      <div className="flex flex-wrap gap-3 justify-center">
+      <div className="flex flex-wrap gap-3 justify-center max-h-96 overflow-y-auto">
         {categories.map((category) => (
           <Button
             key={category.id}
             variant="outline"
             onClick={() => setSelectedCategory(category.id)}
-            className={`px-6 py-3 font-mono text-sm border-2 transition-all duration-300 ${
+            className={`px-4 py-2 font-mono text-xs border-2 transition-all duration-300 whitespace-nowrap ${
               selectedCategory === category.id
                 ? "bg-green-900/50 border-green-400 text-green-300 shadow-lg shadow-green-500/20 scale-105"
                 : "bg-gray-900/50 border-green-500/30 text-green-400 hover:bg-green-900/30 hover:border-green-400/50 hover:scale-105"
             }`}
           >
-            <span className="mr-2 text-base">{category.icon}</span>
+            <span className="mr-2 text-sm">{category.icon}</span>
             {">"} {category.name}
           </Button>
         ))}
