@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,18 +64,26 @@ export const BlankPromptCard = () => {
 
   const createPromptMutation = useCreatePrompt();
 
+  // Get user email for author field
+  const userEmail = localStorage.getItem('user_email');
+  const defaultAuthor = userEmail ? userEmail.split('@')[0].substring(0, 15) : "";
+
   const handleSave = () => {
-    if (!formData.title || !formData.description || !formData.content || !formData.category || !formData.author) {
+    if (!formData.title || !formData.description || !formData.content || !formData.category) {
       toast({
         title: ">>> VALIDATION_ERROR",
-        description: "All fields are required to create prompt",
+        description: "Title, description, content and category are required",
         variant: "destructive",
       });
       return;
     }
 
+    // Use email prefix as author if no author provided
+    const authorName = formData.author || defaultAuthor || "Anonymous";
+
     createPromptMutation.mutate({
       ...formData,
+      author: authorName,
       tags,
     });
 
@@ -242,7 +251,7 @@ export const BlankPromptCard = () => {
           <Input
             value={formData.author}
             onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-            placeholder="AUTHOR_NAME..."
+            placeholder={defaultAuthor ? `AUTHOR: ${defaultAuthor}` : "AUTHOR_NAME..."}
             className="bg-gray-900/50 border-green-500/30 text-green-300 placeholder:text-green-500/50 font-mono text-sm"
           />
         </div>

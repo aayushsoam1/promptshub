@@ -88,9 +88,11 @@ export type Database = {
           created_at: string | null
           description: string
           id: string
+          profile_id: string | null
           tags: string[] | null
           title: string
           updated_at: string | null
+          user_email: string | null
         }
         Insert: {
           author: string
@@ -99,9 +101,11 @@ export type Database = {
           created_at?: string | null
           description: string
           id?: string
+          profile_id?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string | null
+          user_email?: string | null
         }
         Update: {
           author?: string
@@ -110,11 +114,21 @@ export type Database = {
           created_at?: string | null
           description?: string
           id?: string
+          profile_id?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string | null
+          user_email?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "prompts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       prompts_card: {
         Row: {
@@ -149,6 +163,45 @@ export type Database = {
           email?: string
           id?: string
           subscribed_at?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          created_at: string | null
+          display_name: string | null
+          email: string
+          first_name: string | null
+          id: string
+          last_login: string | null
+          last_name: string | null
+          subscribed_at: string | null
+          subscription_status: boolean
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_name?: string | null
+          email: string
+          first_name?: string | null
+          id?: string
+          last_login?: string | null
+          last_name?: string | null
+          subscribed_at?: string | null
+          subscription_status?: boolean
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_name?: string | null
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_login?: string | null
+          last_name?: string | null
+          subscribed_at?: string | null
+          subscription_status?: boolean
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -194,12 +247,23 @@ export type Database = {
           description: string | null
           id: string | null
           likes: number | null
+          profile_id: string | null
           tags: string[] | null
           title: string | null
           updated_at: string | null
+          user_display_name: string | null
+          user_email: string | null
           views: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "prompts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {

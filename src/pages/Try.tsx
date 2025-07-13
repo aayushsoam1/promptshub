@@ -6,21 +6,25 @@ import { FeaturedPrompts } from "@/components/FeaturedPrompts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { Terminal, Mail, Zap } from "lucide-react";
+import { Terminal, Mail, Zap, User } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useUserProfile } from "@/hooks/useUserProfile";
+import { UserProfileModal } from "@/components/UserProfileModal";
 
 const Try = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
   const navigate = useNavigate();
+  const { userProfile, getOrCreateProfile } = useUserProfile();
 
   const handleSubscribe = async () => {
     if (!email) {
       toast({
-        title: "Email Required",
+        title: ">>> EMAIL_REQUIRED",
         description: "Please enter your email address",
         variant: "destructive",
       });
@@ -29,16 +33,27 @@ const Try = () => {
 
     setIsSubscribing(true);
     
-    // Simulate subscription process
-    setTimeout(() => {
-      setIsSubscribing(false);
+    try {
+      const profile = await getOrCreateProfile(email);
+      if (profile) {
+        setShowSubscribeModal(false);
+        setEmail("");
+        // Store email in localStorage for session
+        localStorage.setItem('user_email', email);
+        navigate("/prompts");
+      }
+    } catch (error) {
       toast({
-        title: "Success!",
-        description: "You now have full access to all prompts!",
+        title: ">>> SYSTEM_ERROR",
+        description: "Failed to process subscription. Try again.",
+        variant: "destructive",
       });
-      navigate("/prompts");
-    }, 1500);
+    } finally {
+      setIsSubscribing(false);
+    }
   };
+
+  const currentUserEmail = localStorage.getItem('user_email');
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
@@ -104,8 +119,26 @@ const Try = () => {
         </div>
       )}
 
-      {/* Subscribe Button */}
-      <div className="fixed top-4 right-4 z-40">
+      {/* User Profile Modal */}
+      {currentUserEmail && (
+        <UserProfileModal
+          isOpen={showProfileModal}
+          onClose={() => setShowProfileModal(false)}
+          userEmail={currentUserEmail}
+        />
+      )}
+
+      {/* Header Controls */}
+      <div className="fixed top-4 right-4 z-40 flex gap-2">
+        {currentUserEmail && (
+          <Button
+            onClick={() => setShowProfileModal(true)}
+            className="bg-green-900/50 hover:bg-green-800/50 text-green-300 border border-green-500/50 hover:border-green-400 font-mono"
+          >
+            <User className="h-4 w-4 mr-2" />
+            PROFILE
+          </Button>
+        )}
         <Button
           onClick={() => setShowSubscribeModal(true)}
           className="bg-green-900/50 hover:bg-green-800/50 text-green-300 border border-green-500/50 hover:border-green-400 font-mono"
@@ -120,7 +153,10 @@ const Try = () => {
         <div className="bg-green-900/20 border-b border-green-500/30 py-3">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <p className="text-green-400 font-mono text-sm">
-              {">"} TRIAL_MODE_ACTIVE - LIMITED_PREVIEW (Click SUBSCRIBE for full access)
+              {currentUserEmail 
+                ? `{">"} LOGGED_IN: ${currentUserEmail} - FULL_ACCESS_GRANTED`
+                : `{">"} TRIAL_MODE_ACTIVE - LIMITED_PREVIEW (Click SUBSCRIBE for full access)`
+              }
             </p>
           </div>
         </div>

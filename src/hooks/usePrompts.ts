@@ -16,6 +16,8 @@ export interface Prompt {
   copies: number;
   created_at: string;
   updated_at: string;
+  user_email?: string;
+  profile_id?: string;
 }
 
 // Generate session ID for anonymous users
@@ -84,9 +86,30 @@ export const useCreatePrompt = () => {
       tags: string[];
       author: string;
     }) => {
+      // Get user email and profile if available
+      const userEmail = localStorage.getItem('user_email');
+      
+      let profileId = null;
+      if (userEmail) {
+        // Get user profile
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('id')
+          .eq('email', userEmail)
+          .single();
+        
+        if (profile) {
+          profileId = profile.id;
+        }
+      }
+
       const { data, error } = await supabase
         .from('prompts')
-        .insert([promptData])
+        .insert([{
+          ...promptData,
+          user_email: userEmail,
+          profile_id: profileId,
+        }])
         .select()
         .single();
       
@@ -100,15 +123,15 @@ export const useCreatePrompt = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['prompts'] });
       toast({
-        title: "Success!",
-        description: "Prompt created successfully",
+        title: ">>> SUCCESS",
+        description: "Prompt uploaded to database successfully",
       });
     },
     onError: (error) => {
       console.error('Create prompt error:', error);
       toast({
-        title: "Error",
-        description: "Failed to create prompt",
+        title: ">>> ERROR",
+        description: "Failed to upload prompt to database",
         variant: "destructive",
       });
     }
