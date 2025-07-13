@@ -46,13 +46,13 @@ export const UserProfileModal = ({ isOpen, onClose, userEmail }: UserProfileModa
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] bg-black border-2 border-green-500/50 text-green-300 overflow-y-auto">
-        <DialogHeader className="border-b border-green-500/30 pb-4">
-          <DialogTitle className="text-xl font-mono text-green-400 tracking-wider flex items-center">
+      <DialogContent className="max-w-4xl max-h-[80vh] bg-card border-2 border-border text-foreground overflow-y-auto">
+        <DialogHeader className="border-b border-border pb-4">
+          <DialogTitle className="text-xl font-mono text-primary tracking-wider flex items-center">
             <User className="h-5 w-5 mr-2" />
             {"> USER_PROFILE_DASHBOARD"}
           </DialogTitle>
-          <div className="text-green-300/80 font-mono text-sm mt-2">
+          <div className="text-muted-foreground font-mono text-sm mt-2">
             {"// " + userEmail}
           </div>
         </DialogHeader>
@@ -60,33 +60,33 @@ export const UserProfileModal = ({ isOpen, onClose, userEmail }: UserProfileModa
         <div className="space-y-6">
           {/* Profile Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-gray-900/50 border-green-500/30">
+            <Card className="bg-muted border-border">
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-mono text-green-400">{userPrompts.length}</div>
-                  <div className="text-sm text-green-300/70 font-mono">PROMPTS_CREATED</div>
+                  <div className="text-2xl font-mono text-primary">{userPrompts.length}</div>
+                  <div className="text-sm text-muted-foreground font-mono">PROMPTS_CREATED</div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-gray-900/50 border-green-500/30">
+            <Card className="bg-muted border-border">
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-mono text-green-400">
+                  <div className="text-2xl font-mono text-primary">
                     {userPrompts.reduce((sum, p) => sum + (p.likes || 0), 0)}
                   </div>
-                  <div className="text-sm text-green-300/70 font-mono">TOTAL_LIKES</div>
+                  <div className="text-sm text-muted-foreground font-mono">TOTAL_LIKES</div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-gray-900/50 border-green-500/30">
+            <Card className="bg-muted border-border">
               <CardContent className="p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-mono text-green-400">
+                  <div className="text-2xl font-mono text-primary">
                     {userPrompts.reduce((sum, p) => sum + (p.views || 0), 0)}
                   </div>
-                  <div className="text-sm text-green-300/70 font-mono">TOTAL_VIEWS</div>
+                  <div className="text-sm text-muted-foreground font-mono">TOTAL_VIEWS</div>
                 </div>
               </CardContent>
             </Card>
@@ -94,28 +94,28 @@ export const UserProfileModal = ({ isOpen, onClose, userEmail }: UserProfileModa
 
           {/* User Prompts */}
           <div>
-            <h3 className="text-lg font-mono text-green-400 mb-4 flex items-center">
+            <h3 className="text-lg font-mono text-primary mb-4 flex items-center">
               <Calendar className="h-4 w-4 mr-2" />
               {">"} YOUR_PROMPTS_DATABASE
             </h3>
             
             {isLoading ? (
-              <div className="text-center py-8 text-green-500/70 font-mono">
+              <div className="text-center py-8 text-muted-foreground font-mono">
                 LOADING_USER_DATA...
               </div>
             ) : userPrompts.length === 0 ? (
-              <div className="text-center py-8 text-green-500/70 font-mono">
+              <div className="text-center py-8 text-muted-foreground font-mono">
                 {"// NO_PROMPTS_CREATED_YET"}
               </div>
             ) : (
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {userPrompts.map((prompt) => (
-                  <Card key={prompt.id} className="bg-gray-900/50 border-green-500/30 hover:border-green-400/50 transition-colors">
+                  <Card key={prompt.id} className="bg-muted border-border hover:border-primary/50 transition-colors">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-lg font-mono text-green-400">
+                      <CardTitle className="text-lg font-mono text-primary">
                         {"> " + prompt.title?.toUpperCase()}
                       </CardTitle>
-                      <p className="text-sm text-green-300/80 font-mono">
+                      <p className="text-sm text-muted-foreground font-mono">
                         {"// " + prompt.description}
                       </p>
                     </CardHeader>
@@ -123,13 +123,13 @@ export const UserProfileModal = ({ isOpen, onClose, userEmail }: UserProfileModa
                     <CardContent className="pt-0">
                       <div className="flex flex-wrap gap-2 mb-3">
                         {prompt.tags?.map((tag: string) => (
-                          <Badge key={tag} className="text-xs bg-green-900/50 text-green-400 border border-green-500/30 font-mono">
+                          <Badge key={tag} className="text-xs bg-background text-foreground border border-border font-mono">
                             #{tag}
                           </Badge>
                         ))}
                       </div>
                       
-                      <div className="flex items-center justify-between text-xs text-green-500/70 font-mono">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
                         <span>CATEGORY: {prompt.category}</span>
                         <div className="flex items-center gap-4">
                           <div className="flex items-center gap-1">
