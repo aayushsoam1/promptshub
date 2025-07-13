@@ -11,6 +11,11 @@ const Auth = () => {
   const [isSubscribing, setIsSubscribing] = useState(false);
   const navigate = useNavigate();
 
+  const validateGmailEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@gmail\.com$/i;
+    return emailRegex.test(email);
+  };
+
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -23,10 +28,10 @@ const Auth = () => {
       return;
     }
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
+    if (!validateGmailEmail(email)) {
       toast({
         title: "Invalid Email",
-        description: "Please enter a valid email address",
+        description: "Only Gmail addresses (@gmail.com) are allowed",
         variant: "destructive",
       });
       return;
@@ -37,6 +42,7 @@ const Auth = () => {
     // Simulate subscription process
     setTimeout(() => {
       setIsSubscribing(false);
+      localStorage.setItem('user_email', email);
       toast({
         title: "Welcome to PromptHub!",
         description: "You now have full access to all prompts!",
@@ -67,9 +73,9 @@ const Auth = () => {
             </h1>
             
             <p className="text-muted-foreground font-mono text-sm">
-              {"// "} ENTER_EMAIL_FOR_UNLIMITED_ACCESS
+              {"// "} ENTER_GMAIL_FOR_UNLIMITED_ACCESS
               <br />
-              {"// "} NO_PAYMENT_REQUIRED
+              {"// "} ONLY_GMAIL_ADDRESSES_ACCEPTED
               <br />
               {"// "} INSTANT_ACTIVATION
             </p>
@@ -78,12 +84,12 @@ const Auth = () => {
           <form onSubmit={handleSubscribe} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-foreground font-mono text-sm mb-2">
-                {">"} EMAIL_ADDRESS:
+                {">"} GMAIL_ADDRESS:
               </label>
               <Input
                 id="email"
                 type="email"
-                placeholder="your.email@example.com"
+                placeholder="your.email@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-background border-border text-foreground placeholder:text-muted-foreground font-mono focus:border-primary"

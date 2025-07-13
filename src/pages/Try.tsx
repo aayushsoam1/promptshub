@@ -21,11 +21,25 @@ const Try = () => {
   const navigate = useNavigate();
   const { userProfile, getOrCreateProfile } = useUserProfile();
 
+  const validateGmailEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@gmail\.com$/i;
+    return emailRegex.test(email);
+  };
+
   const handleSubscribe = async () => {
     if (!email) {
       toast({
         title: ">>> EMAIL_REQUIRED",
         description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!validateGmailEmail(email)) {
+      toast({
+        title: ">>> INVALID_EMAIL",
+        description: "Only Gmail addresses (@gmail.com) are allowed",
         variant: "destructive",
       });
       return;
@@ -68,9 +82,9 @@ const Try = () => {
             </h2>
             
             <p className="text-muted-foreground font-mono text-sm mb-6">
-              {"// "} ENTER_EMAIL_FOR_UNLIMITED_ACCESS
+              {"// "} ENTER_GMAIL_FOR_UNLIMITED_ACCESS
               <br />
-              {"// "} UNLOCK_ALL_PROMPTS_DATABASE
+              {"// "} ONLY_GMAIL_ADDRESSES_ACCEPTED
               <br />
               {"// "} NO_PAYMENT_REQUIRED
             </p>
@@ -78,7 +92,7 @@ const Try = () => {
             <div className="space-y-4">
               <Input
                 type="email"
-                placeholder="your.email@example.com"
+                placeholder="your.email@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-background border-border text-foreground placeholder:text-muted-foreground font-mono"
@@ -156,6 +170,7 @@ const Try = () => {
           selectedCategory={selectedCategory} 
           searchQuery={searchQuery}
           limitCards={8}
+          requireSubscription={!currentUserEmail}
         />
       </div>
     </div>

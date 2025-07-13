@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -7,10 +6,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X, Search } from "lucide-react";
+import { Plus, X, Search, Lock } from "lucide-react";
 import { useCreatePrompt } from "@/hooks/usePrompts";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { toast } from "@/hooks/use-toast";
 
 const categories = [
   { id: "writing", name: "Writing", icon: "✍️" },
@@ -64,9 +64,31 @@ export const CreatePromptDialog = () => {
   const [newTag, setNewTag] = useState("");
 
   const createPromptMutation = useCreatePrompt();
+  const currentUserEmail = localStorage.getItem('user_email');
+
+  const handleDialogOpen = (isOpen: boolean) => {
+    if (isOpen && !currentUserEmail) {
+      toast({
+        title: ">>> SUBSCRIPTION_REQUIRED",
+        description: "Please subscribe with a Gmail account to create prompts",
+        variant: "destructive",
+      });
+      return;
+    }
+    setOpen(isOpen);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!currentUserEmail) {
+      toast({
+        title: ">>> SUBSCRIPTION_REQUIRED",
+        description: "Please subscribe with a Gmail account to create prompts",
+        variant: "destructive",
+      });
+      return;
+    }
     
     if (!formData.title || !formData.description || !formData.content || !formData.category || !formData.author) {
       return;
@@ -102,8 +124,21 @@ export const CreatePromptDialog = () => {
 
   const selectedCategory = categories.find(cat => cat.id === formData.category);
 
+  if (!currentUserEmail) {
+    return (
+      <Button 
+        onClick={() => handleDialogOpen(true)}
+        className="mb-8 bg-muted text-muted-foreground cursor-not-allowed"
+        disabled
+      >
+        <Lock className="h-4 w-4 mr-2" />
+        Subscribe to Create Prompts
+      </Button>
+    );
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogOpen}>
       <DialogTrigger asChild>
         <Button className="mb-8 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
           <Plus className="h-4 w-4 mr-2" />

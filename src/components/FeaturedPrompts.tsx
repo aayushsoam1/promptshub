@@ -1,95 +1,120 @@
-import { PromptCard } from "@/components/PromptCard";
-import { BlankPromptCard } from "@/components/BlankPromptCard";
+
 import { usePrompts } from "@/hooks/usePrompts";
-import { Terminal, Database, AlertTriangle } from "lucide-react";
+import { PromptCard } from "./PromptCard";
+import { BlankPromptCard } from "./BlankPromptCard";
+import { Button } from "./ui/button";
+import { ChevronRight, Lock } from "lucide-react";
+import { Link } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
+
 interface FeaturedPromptsProps {
   selectedCategory: string;
   searchQuery: string;
   limitCards?: number;
+  requireSubscription?: boolean;
 }
-export const FeaturedPrompts = ({
-  selectedCategory,
-  searchQuery,
-  limitCards
+
+export const FeaturedPrompts = ({ 
+  selectedCategory, 
+  searchQuery, 
+  limitCards,
+  requireSubscription = false 
 }: FeaturedPromptsProps) => {
-  const {
-    data: prompts,
-    isLoading,
-    error
-  } = usePrompts();
+  const { data: prompts, isLoading, error } = usePrompts();
+
+  const handleCreatePromptClick = () => {
+    if (requireSubscription) {
+      toast({
+        title: ">>> SUBSCRIPTION_REQUIRED",
+        description: "Please subscribe with a Gmail account to create prompts",
+        variant: "destructive",
+      });
+      return;
+    }
+  };
+
   if (isLoading) {
-    return <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <Terminal className="h-16 w-16 text-green-400 mx-auto mb-4 animate-spin" />
-          <p className="text-green-400 font-mono text-lg">{">"} LOADING DATABASE...</p>
-          <p className="text-green-500/60 font-mono text-sm mt-2">{">"} ACCESSING PROMPT_ENTRIES.db</p>
-          <div className="flex justify-center mt-4">
-            <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden">
-              <div className="h-full bg-green-500 animate-pulse rounded-full w-3/4"></div>
-            </div>
+    return (
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="h-64 bg-muted animate-pulse rounded-lg"></div>
+            ))}
           </div>
         </div>
-      </div>;
+      </section>
+    );
   }
+
   if (error) {
-    return <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <AlertTriangle className="h-16 w-16 text-red-500 mx-auto mb-4 animate-pulse" />
-          <p className="text-red-400 font-mono text-lg">{">"} DATABASE_CONNECTION_ERROR</p>
-          <p className="text-red-500/60 font-mono text-sm mt-2">{">"} FAILED TO LOAD PROMPT_ENTRIES</p>
-          <p className="text-green-500/60 font-mono text-xs mt-4">{">"} TRY: sudo systemctl restart prompthub</p>
+    return (
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="text-destructive">Failed to load prompts. Please try again.</p>
         </div>
-      </div>;
+      </section>
+    );
   }
-  const filteredPrompts = prompts?.filter(prompt => {
+
+  if (!prompts) {
+    return null;
+  }
+
+  const filteredPrompts = prompts.filter(prompt => {
     const matchesCategory = selectedCategory === "all" || prompt.category === selectedCategory;
-    const matchesSearch = prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) || prompt.description.toLowerCase().includes(searchQuery.toLowerCase()) || prompt.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesSearch = !searchQuery || 
+      prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      prompt.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      prompt.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    
     return matchesCategory && matchesSearch;
-  }) || [];
+  });
 
-  // Apply limit if specified
-  const displayPrompts = limitCards ? filteredPrompts.slice(0, limitCards - 1) : filteredPrompts;
-  return <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-      <div className="text-center mb-12">
-        <div className="flex items-center justify-center mb-4">
+  const displayPrompts = limitCards ? filteredPrompts.slice(0, limitCards) : filteredPrompts;
+
+  return (
+    <section className="py-16 px-4 bg-background">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-foreground">Featured Prompts</h2>
+          {limitCards && filteredPrompts.length > limitCards && (
+            <Button asChild variant="outline" className="border-border hover:bg-muted">
+              <Link to="/prompts" className="flex items-center gap-2">
+                View All <ChevronRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          )}
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {requireSubscription ? (
+            <div 
+              onClick={handleCreatePromptClick}
+              className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:border-muted-foreground/50 transition-colors cursor-pointer bg-muted/20"
+            >
+              <Lock className="h-8 w-8 text-muted-foreground mb-2" />
+              <h3 className="font-semibold text-muted-foreground mb-1">Subscribe Required</h3>
+              <p className="text-sm text-muted-foreground">Subscribe with Gmail to create prompts</p>
+            </div>
+          ) : (
+            <BlankPromptCard />
+          )}
           
-          <h2 className="text-3xl md:text-4xl font-bold font-mono tracking-wider text-slate-950">
-            {">"} FEATURED_PROMPTS.db
-          </h2>
+          {displayPrompts.map((prompt) => (
+            <PromptCard key={prompt.id} {...prompt} />
+          ))}
         </div>
         
-        <div className="border border-green-500/30 rounded-lg p-4 max-w-2xl mx-auto mb-8 bg-zinc-950">
-          <p className="text-green-300/80 font-mono text-sm">
-            {"// "} HAND-PICKED PROMPT ENTRIES FOR MAXIMUM EFFICIENCY
-            <br />
-            {"// "} OPTIMIZED FOR VARIOUS AI MODEL INTERACTIONS
-            {limitCards && <>
-                <br className="text-gray-950" />
-                {"// "} TRIAL_MODE: SHOWING {limitCards} OF {filteredPrompts.length + 1} ENTRIES
-              </>}
-          </p>
-        </div>
-        
-        <div className="mt-6 font-mono text-xs text-green-500/60">
-          <p>{">"} TOTAL_ENTRIES: {limitCards ? `${limitCards}/${filteredPrompts.length + 1}` : filteredPrompts.length + 1}</p>
-          <p>{">"} CATEGORY_FILTER: {selectedCategory.toUpperCase()}</p>
-          {limitCards && <p>{">"} ACCESS_MODE: TRIAL_LIMITED</p>}
-        </div>
-      </div>
-
-      {displayPrompts.length === 0 && !limitCards ? <div className="text-center py-12">
-          <div className="bg-gray-900/50 border-2 border-green-500/30 rounded-lg p-8 max-w-md mx-auto">
-            <Terminal className="h-16 w-16 text-green-400 mx-auto mb-4" />
-            <h3 className="text-xl font-mono text-green-300 mb-2">{">"} NO_ENTRIES_FOUND</h3>
-            <p className="text-green-500/60 font-mono text-sm">{">"} SEARCH_QUERY_RETURNED_EMPTY</p>
-            <p className="text-green-500/60 font-mono text-sm mt-2">{">"} TRY: MODIFY SEARCH PARAMETERS</p>
+        {displayPrompts.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground text-lg">No prompts found matching your criteria.</p>
+            {!requireSubscription && (
+              <p className="text-muted-foreground text-sm mt-2">Try adjusting your search or category filter.</p>
+            )}
           </div>
-        </div> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Always show the blank prompt card first */}
-          <BlankPromptCard />
-          
-          {/* Then show the existing prompts */}
-          {displayPrompts.map(prompt => <PromptCard key={prompt.id} prompt={prompt} />)}
-        </div>}
-    </div>;
+        )}
+      </div>
+    </section>
+  );
 };
