@@ -64,7 +64,7 @@ export const FeaturedPrompts = ({
             <br />
             {"// "} OPTIMIZED FOR VARIOUS AI MODEL INTERACTIONS
             {limitCards && <>
-                <br />
+                <br className="text-gray-950" />
                 {"// "} TRIAL_MODE: SHOWING {limitCards} OF {filteredPrompts.length + 1} ENTRIES
               </>}
           </p>
