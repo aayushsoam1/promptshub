@@ -102,7 +102,7 @@ export const FeaturedPrompts = ({
           )}
           
           {displayPrompts.map((prompt) => (
-            <PromptCard key={prompt.id} {...prompt} />
+            <PromptCard key={prompt.id} prompt={prompt} />
           ))}
         </div>
         
