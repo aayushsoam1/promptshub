@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { useIncrementInteraction } from "@/hooks/usePrompts";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
 interface Prompt {
   id: string;
   title: string;
@@ -19,12 +21,12 @@ interface Prompt {
   views: number;
   copies: number;
 }
+
 interface PromptCardProps {
   prompt: Prompt;
 }
-export const PromptCard = ({
-  prompt
-}: PromptCardProps) => {
+
+export const PromptCard = ({ prompt }: PromptCardProps) => {
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
   const [viewLogged, setViewLogged] = useState(false);
@@ -35,10 +37,8 @@ export const PromptCard = ({
   const getDisplayNumber = (baseNumber: number, type: 'views' | 'likes' | 'copies') => {
     const multipliers = {
       views: Math.floor(Math.random() * 50) + 15,
-      // 15-65x multiplier for views
       likes: Math.floor(Math.random() * 20) + 8,
-      // 8-28x multiplier for likes  
-      copies: Math.floor(Math.random() * 15) + 5 // 5-20x multiplier for copies
+      copies: Math.floor(Math.random() * 15) + 5
     };
     const result = baseNumber * multipliers[type];
     if (result >= 1000) {
@@ -57,20 +57,22 @@ export const PromptCard = ({
       setViewLogged(true);
     }
   }, [prompt.id, viewLogged, incrementInteractionMutation]);
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(prompt.content);
       setCopied(true);
 
-      // Log copy interaction
       incrementInteractionMutation.mutate({
         promptId: prompt.id,
         interactionType: 'copy'
       });
+      
       toast({
         title: ">>> COPIED TO CLIPBOARD",
         description: "Prompt data extracted successfully."
       });
+      
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       toast({
@@ -80,9 +82,9 @@ export const PromptCard = ({
       });
     }
   };
+
   const handleLike = () => {
     if (!liked) {
-      // Log like interaction
       incrementInteractionMutation.mutate({
         promptId: prompt.id,
         interactionType: 'like'
@@ -94,45 +96,52 @@ export const PromptCard = ({
       });
     }
   };
+
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't open detail if clicking on buttons
     if ((e.target as HTMLElement).closest('button')) {
       return;
     }
     setIsDetailOpen(true);
   };
-  return <>
-      <Card className="group h-full bg-black border-2 border-green-500/30 shadow-lg shadow-green-500/20 hover:shadow-green-500/40 hover:border-green-400/50 transition-all duration-300 hover:-translate-y-1 overflow-hidden relative cursor-pointer" onClick={handleCardClick}>
-        {/* Matrix-like background effect */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="text-green-500 text-xs font-mono leading-3 break-all">
-            {Array.from({
-            length: 20
-          }, (_, i) => <div key={i} className="animate-pulse">
-                {Math.random().toString(36).substring(2, 15)}
-              </div>)}
-          </div>
-        </div>
-        
-        
 
-        <CardContent className="py-3 relative z-10">
-          <div className="bg-gray-900/80 rounded-lg p-4 mb-4 border border-green-500/30 backdrop-blur-sm h-32 overflow-hidden">
-            <div className="text-xs text-green-400 mb-2 font-mono">PROMPT_DATA:</div>
+  return (
+    <>
+      <Card className="group h-full bg-card border-2 border-border shadow-lg hover:shadow-xl hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 overflow-hidden relative cursor-pointer" onClick={handleCardClick}>
+        <CardHeader className="pb-3 relative">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-bold text-lg text-primary group-hover:text-primary/80 transition-colors font-mono tracking-wider">
+                  {"> " + prompt.title.toUpperCase()}
+                </h3>
+                <Maximize2 className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <p className="text-muted-foreground text-sm font-mono">
+                {"// " + prompt.description}
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="py-3 relative">
+          <div className="bg-muted rounded-lg p-4 mb-4 border border-border h-32 overflow-hidden">
+            <div className="text-xs text-primary mb-2 font-mono">PROMPT_DATA:</div>
             <div className="h-24 overflow-hidden">
-              <p className="text-sm text-green-300 font-mono whitespace-pre-wrap break-words leading-relaxed">
+              <p className="text-sm text-foreground font-mono whitespace-pre-wrap break-words leading-relaxed">
                 {prompt.content}
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap gap-2 mb-4">
-            {prompt.tags.map(tag => <Badge key={tag} className="text-xs bg-green-900/50 text-green-400 border border-green-500/30 hover:bg-green-800/50 font-mono">
+            {prompt.tags.map(tag => (
+              <Badge key={tag} className="text-xs bg-background text-foreground border border-border hover:bg-muted font-mono">
                 #{tag}
-              </Badge>)}
+              </Badge>
+            ))}
           </div>
 
-          <div className="flex items-center justify-between text-xs text-green-500/70 font-mono">
+          <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
             <span>USER: {prompt.author}</span>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
@@ -151,35 +160,51 @@ export const PromptCard = ({
           </div>
         </CardContent>
 
-        <CardFooter className="pt-3 relative z-10">
+        <CardFooter className="pt-3 relative">
           <div className="flex gap-2 w-full">
-            <Button onClick={handleCopy} variant="outline" size="sm" className="flex-1 bg-transparent border-green-500/50 text-green-400 hover:bg-green-900/30 hover:border-green-400 font-mono">
-              {copied ? <>
-                  <CheckCircle className="h-4 w-4 mr-2 text-green-400" />
+            <Button 
+              onClick={handleCopy} 
+              variant="outline" 
+              size="sm" 
+              className="flex-1 bg-transparent border-border text-foreground hover:bg-muted hover:border-primary font-mono"
+            >
+              {copied ? (
+                <>
+                  <CheckCircle className="h-4 w-4 mr-2 text-primary" />
                   EXTRACTED
-                </> : <>
+                </>
+              ) : (
+                <>
                   <Copy className="h-4 w-4 mr-2" />
                   EXTRACT
-                </>}
+                </>
+              )}
             </Button>
-            <Button onClick={handleLike} variant="outline" size="sm" className={`px-3 bg-transparent border-green-500/50 hover:bg-green-900/30 font-mono ${liked ? 'text-red-400 border-red-400/50' : 'text-green-400 hover:border-green-400'}`}>
-              <Heart className={`h-4 w-4 ${liked ? 'fill-current text-red-400' : ''}`} />
+            <Button 
+              onClick={handleLike} 
+              variant="outline" 
+              size="sm" 
+              className={`px-3 bg-transparent border-border hover:bg-muted font-mono ${
+                liked ? 'text-destructive border-destructive/50' : 'text-foreground hover:border-primary'
+              }`}
+            >
+              <Heart className={`h-4 w-4 ${liked ? 'fill-current text-destructive' : ''}`} />
             </Button>
           </div>
         </CardFooter>
       </Card>
 
-      {/* Smaller Detail Modal */}
+      {/* Detail Modal */}
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] bg-black border-2 border-green-500/50 text-green-300">
-          <DialogHeader className="border-b border-green-500/30 pb-4">
-            <DialogTitle className="text-xl font-mono text-green-400 tracking-wider">
+        <DialogContent className="max-w-2xl max-h-[80vh] bg-card border-2 border-border text-foreground">
+          <DialogHeader className="border-b border-border pb-4">
+            <DialogTitle className="text-xl font-mono text-primary tracking-wider">
               {"> " + prompt.title.toUpperCase()}
             </DialogTitle>
-            <p className="text-green-300/80 font-mono text-sm mt-2">
+            <p className="text-muted-foreground font-mono text-sm mt-2">
               {"// " + prompt.description}
             </p>
-            <div className="flex items-center justify-between text-xs text-green-500/70 font-mono mt-3">
+            <div className="flex items-center justify-between text-xs text-muted-foreground font-mono mt-3">
               <span>USER: {prompt.author}</span>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
@@ -200,37 +225,54 @@ export const PromptCard = ({
           
           <div className="flex-1 min-h-0">
             <div className="mb-4">
-              <div className="text-sm text-green-400 mb-3 font-mono">PROMPT_DATA:</div>
-              <ScrollArea className="h-[200px] w-full rounded-lg border border-green-500/30 bg-gray-900/50 p-4 mx-0 my-[-3px] px-[16px]">
-                <pre className="text-sm text-green-300 font-mono whitespace-pre-wrap break-words leading-relaxed">
+              <div className="text-sm text-primary mb-3 font-mono">PROMPT_DATA:</div>
+              <ScrollArea className="h-[200px] w-full rounded-lg border border-border bg-muted p-4">
+                <pre className="text-sm text-foreground font-mono whitespace-pre-wrap break-words leading-relaxed">
                   {prompt.content}
                 </pre>
               </ScrollArea>
             </div>
 
             <div className="flex flex-wrap gap-2 mb-6">
-              {prompt.tags.map(tag => <Badge key={tag} className="text-xs bg-green-900/50 text-green-400 border border-green-500/30 font-mono">
+              {prompt.tags.map(tag => (
+                <Badge key={tag} className="text-xs bg-background text-foreground border border-border font-mono">
                   #{tag}
-                </Badge>)}
+                </Badge>
+              ))}
             </div>
 
             <div className="flex gap-3">
-              <Button onClick={handleCopy} variant="outline" className="flex-1 bg-transparent border-green-500/50 text-green-400 hover:bg-green-900/30 hover:border-green-400 font-mono">
-                {copied ? <>
-                    <CheckCircle className="h-4 w-4 mr-2 text-green-400" />
+              <Button 
+                onClick={handleCopy} 
+                variant="outline" 
+                className="flex-1 bg-transparent border-border text-foreground hover:bg-muted hover:border-primary font-mono"
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2 text-primary" />
                     EXTRACTED
-                  </> : <>
+                  </>
+                ) : (
+                  <>
                     <Copy className="h-4 w-4 mr-2" />
                     EXTRACT FULL TEXT
-                  </>}
+                  </>
+                )}
               </Button>
-              <Button onClick={handleLike} variant="outline" className={`px-6 bg-transparent border-green-500/50 hover:bg-green-900/30 font-mono ${liked ? 'text-red-400 border-red-400/50' : 'text-green-400 hover:border-green-400'}`}>
-                <Heart className={`h-4 w-4 mr-2 ${liked ? 'fill-current text-red-400' : ''}`} />
+              <Button 
+                onClick={handleLike} 
+                variant="outline" 
+                className={`px-6 bg-transparent border-border hover:bg-muted font-mono ${
+                  liked ? 'text-destructive border-destructive/50' : 'text-foreground hover:border-primary'
+                }`}
+              >
+                <Heart className={`h-4 w-4 mr-2 ${liked ? 'fill-current text-destructive' : ''}`} />
                 {liked ? 'LIKED' : 'LIKE'}
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
-    </>;
+    </>
+  );
 };
