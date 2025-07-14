@@ -48,12 +48,27 @@ export const UserProfileModal = ({ isOpen, onClose, userEmail }: UserProfileModa
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[80vh] bg-card border-2 border-border text-foreground overflow-y-auto">
         <DialogHeader className="border-b border-border pb-4">
-          <DialogTitle className="text-xl font-mono text-primary tracking-wider flex items-center">
-            <User className="h-5 w-5 mr-2" />
-            {"> USER_PROFILE_DASHBOARD"}
-          </DialogTitle>
-          <div className="text-muted-foreground font-mono text-sm mt-2">
-            {"// " + userEmail}
+          <div className="flex justify-between items-start">
+            <div className="flex-1">
+              <DialogTitle className="text-xl font-mono text-primary tracking-wider flex items-center">
+                <User className="h-5 w-5 mr-2" />
+                {"> USER_PROFILE_DASHBOARD"}
+              </DialogTitle>
+              <div className="text-muted-foreground font-mono text-sm mt-2">
+                {"// " + userEmail}
+              </div>
+            </div>
+            <Button
+              onClick={() => {
+                localStorage.removeItem('user_email');
+                localStorage.removeItem('user_subscribed');
+                window.location.href = '/try';
+              }}
+              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground font-mono text-sm"
+              size="sm"
+            >
+              UNSUBSCRIBE
+            </Button>
           </div>
         </DialogHeader>
 
