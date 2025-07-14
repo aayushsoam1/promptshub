@@ -149,7 +149,7 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
                 {getDisplayNumber(prompt.views, 'views')}
               </div>
               <div className="flex items-center gap-1">
-                <Heart className="h-3 w-3" />
+                <Heart className="h-3 w-3 text-red-500" />
                 {getDisplayNumber(prompt.likes, 'likes')}
               </div>
               <div className="flex items-center gap-1">
