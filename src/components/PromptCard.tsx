@@ -134,7 +134,7 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
           </div>
 
           <div className="flex flex-wrap gap-2 mb-4">
-            {prompt.tags.map(tag => (
+            {(prompt.tags || []).map(tag => (
               <Badge key={tag} className="text-xs bg-background text-foreground border border-border hover:bg-muted font-mono">
                 #{tag}
               </Badge>
@@ -234,7 +234,7 @@ export const PromptCard = ({ prompt }: PromptCardProps) => {
             </div>
 
             <div className="flex flex-wrap gap-2 mb-6">
-              {prompt.tags.map(tag => (
+              {(prompt.tags || []).map(tag => (
                 <Badge key={tag} className="text-xs bg-background text-foreground border border-border font-mono">
                   #{tag}
                 </Badge>
