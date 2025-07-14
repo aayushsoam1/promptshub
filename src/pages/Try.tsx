@@ -128,25 +128,6 @@ const Try = () => {
         />
       )}
 
-      {/* Header Controls */}
-      <div className="fixed top-4 right-4 z-40 flex gap-2">
-        {currentUserEmail && (
-          <Button
-            onClick={() => setShowProfileModal(true)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground border border-border font-mono"
-          >
-            <User className="h-4 w-4 mr-2" />
-            PROFILE
-          </Button>
-        )}
-        <Button
-          onClick={() => setShowSubscribeModal(true)}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground border border-border font-mono"
-        >
-          <Zap className="h-4 w-4 mr-2" />
-          SUBSCRIBE
-        </Button>
-      </div>
       
       <div className="relative">
         {/* Trial Mode Banner */}
