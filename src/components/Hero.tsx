@@ -1,6 +1,7 @@
 
-import { Search, Terminal, Zap } from "lucide-react";
+import { Search, Terminal, Zap, Database } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { usePromptCount } from "@/hooks/usePrompts";
 
 interface HeroProps {
   searchQuery: string;
@@ -8,6 +9,8 @@ interface HeroProps {
 }
 
 export const Hero = ({ searchQuery, setSearchQuery }: HeroProps) => {
+  const { data: totalPrompts, isLoading: isCountLoading } = usePromptCount();
+  
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-background via-muted/30 to-background border-b border-border">
       <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
@@ -48,6 +51,15 @@ export const Hero = ({ searchQuery, setSearchQuery }: HeroProps) => {
                 </div>
                 <Search className="text-primary h-5 w-5 mr-3" />
               </div>
+            </div>
+            
+            {/* Total Prompt Count Display */}
+            <div className="mt-4 flex items-center justify-center gap-2 text-primary font-mono text-sm">
+              <Database className="h-4 w-4" />
+              <span>TOTAL_PROMPTS: </span>
+              <span className="text-foreground font-bold">
+                {isCountLoading ? "LOADING..." : `${totalPrompts || 0}`}
+              </span>
             </div>
           </div>
           

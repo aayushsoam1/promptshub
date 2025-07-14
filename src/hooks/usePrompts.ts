@@ -49,6 +49,24 @@ export const usePrompts = () => {
   });
 };
 
+export const usePromptCount = () => {
+  return useQuery({
+    queryKey: ['prompt-count'],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('prompts')
+        .select('*', { count: 'exact', head: true });
+      
+      if (error) {
+        console.error('Error fetching prompt count:', error);
+        throw error;
+      }
+      
+      return count || 0;
+    }
+  });
+};
+
 export const useIncrementInteraction = () => {
   const queryClient = useQueryClient();
   
@@ -122,6 +140,7 @@ export const useCreatePrompt = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['prompts'] });
+      queryClient.invalidateQueries({ queryKey: ['prompt-count'] });
       toast({
         title: ">>> SUCCESS",
         description: "Prompt uploaded to database successfully",
