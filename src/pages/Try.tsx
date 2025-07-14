@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Hero } from "@/components/Hero";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { FeaturedPrompts } from "@/components/FeaturedPrompts";
@@ -69,6 +69,21 @@ const Try = () => {
 
   const currentUserEmail = localStorage.getItem('user_email');
 
+  // Show subscribe notification every 20 seconds for unsubscribed users
+  useEffect(() => {
+    if (!currentUserEmail) {
+      const interval = setInterval(() => {
+        toast({
+          title: ">>> SUBSCRIBE_REQUIRED",
+          description: "Get unlimited access - Subscribe now!",
+          variant: "default",
+        });
+      }, 20000); // 20 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [currentUserEmail]);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Subscribe Modal */}
@@ -129,6 +144,19 @@ const Try = () => {
       )}
 
       
+      {/* Subscribe Button for unsubscribed users */}
+      {!currentUserEmail && (
+        <div className="fixed top-4 right-4 z-40">
+          <Button
+            onClick={() => setShowSubscribeModal(true)}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground border border-border font-mono"
+          >
+            <Zap className="h-4 w-4 mr-2" />
+            SUBSCRIBE
+          </Button>
+        </div>
+      )}
+
       <div className="relative">
         {/* Trial Mode Banner */}
         <div className="bg-muted border-b border-border py-3">
